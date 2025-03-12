@@ -1,11 +1,29 @@
 import React from "react";
 import Header from "../Header";
 import "./Login.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { checkValidData } from "../../utils/validate";
 
 export const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
+    // const [error, setError] = useState("");
+    // useRef is a React Hook that lets you reference a value that’s not needed for rendering.
+    const email = useRef(null);
+    const password = useRef(null);
 
+    const handleButtonClick = (event) => {
+        //validate form data
+        event.preventDefault();
+        let isValid = checkValidData(email.current, password.current);
+        if(isValid){
+            console.log("make a call")
+        }
+        else{
+            setError(isValid)
+        }
+    }
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
     }
@@ -23,7 +41,7 @@ export const Login = () => {
           </div>
           <div className="m-28"  >
             
-            <form className="login-form flex flex-col gap-2 mx-auto max-w-md w-full sm:max-w-md md:max-w-md  lg:max-w-md bg-black bg-opacity-80 rounded p-8">
+            <form className="login-form flex flex-col gap-2 mx-auto w-full sm:w-full md:w-full  lg:w-full bg-black bg-opacity-80 rounded p-8">
             <h1 className="text-3xl font-bold text-white leading-tight pb-4 m-2">
               {isSignInForm ? "Sign In" : "Sign Up"}
               </h1>
@@ -35,16 +53,20 @@ export const Login = () => {
                 />
               )}
               <input
+              ref={email}
                 type="text"
                 placeholder="Email or phone number"
                 className="p-4 m-2 bg-gray-900 bg-opacity-80 text-slate-200 rounded-md text-white"
               />
               <input
+              ref={password}
                 type="password"
                 placeholder="Password"
                 className="p-4 m-2 bg-gray-900 bg-opacity-80 border-white rounded-md text-white"
               />
-              <button className="bg-red-700 hover:bg-red-800 text-white font-bold  p-2 m-2 rounded my-5 sign-in-button">
+              <button
+              onClick={handleButtonClick}
+               className="bg-red-700 hover:bg-red-800 text-white font-bold  p-4 m-2 rounded my-5 sign-in-button">
                 {isSignInForm ? "Sign In" : "Sign Up"}
               </button>
               <p className="text-white">{isSignInForm? "New to Netflix?": "Already have an account?"}  
