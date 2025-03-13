@@ -25,9 +25,18 @@ export const Login = () => {
     }
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
-        name.current.value = null;
-        email.current.value = null;
-        password.current.value = null;
+        if(name !== null){
+
+          name.current.value = null;
+        }
+        if(email !== null){
+
+          email.current.value = null;
+        }
+        if(password !== null){
+
+          password.current.value = null;
+        }
     }
 
   return (
