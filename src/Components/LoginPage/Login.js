@@ -19,26 +19,18 @@ export const Login = () => {
         //validate form data
         event.preventDefault();
         
-        let isValid = checkValidData(email.current.value, password.current.value, !isSignInForm ? name:"");
+        let isValid = checkValidData(email.current.value, password.current.value, !isSignInForm ? name.current.value:"none");
         setErrorMessage(isValid === true ? '': isValid)
+
+        //Sign in or Sign up
+
         
     }
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
-        if(name !== null){
-
-          name.current.value = null;
-        }
-        if(email !== null){
-
-          email.current.value = null;
-        }
-        if(password !== null){
-
-          password.current.value = null;
-        }
     }
 
+    
   return (
     <div className=" relative login-page">
       <img
@@ -76,7 +68,7 @@ export const Login = () => {
                 placeholder="Password"
                 className="p-4 m-2 bg-gray-900 bg-opacity-80 border-white rounded-md text-white"
               />
-              <p className="text-red-700 p-4 m-2">{errorMessage}</p>
+              <p className="text-red-700 px-4 m-2">{errorMessage}</p>
               <button
               onClick={handleButtonClick}
                className="bg-red-700 hover:bg-red-800 text-white font-bold  p-4 m-2 rounded my-5 sign-in-button">
