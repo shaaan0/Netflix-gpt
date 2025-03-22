@@ -3,34 +3,75 @@ import Header from "../Header";
 import "./Login.css";
 import { useState, useRef } from "react";
 import { checkValidData } from "../../utils/validate";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../utils/firebase";
 
 export const Login = () => {
-    const [isSignInForm, setIsSignInForm] = useState(true);
-    // const [email, setEmail] = useState("");
-    // const [password, setPassword] = useState("");
-    // const [error, setError] = useState("");
-    // useRef is a React Hook that lets you reference a value that’s not needed for rendering.
-    const name = useRef(null)
-    const email = useRef(null);
-    const password = useRef(null);
-    const [errorMessage, setErrorMessage] = useState("")
+  const [isSignInForm, setIsSignInForm] = useState(true);
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [error, setError] = useState("");
+  // useRef is a React Hook that lets you reference a value that’s not needed for rendering.
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const handleButtonClick = (event) => {
-        //validate form data
-        event.preventDefault();
-        
-        let isValid = checkValidData(email.current.value, password.current.value, !isSignInForm ? name.current.value:"none");
-        setErrorMessage(isValid === true ? '': isValid)
+  const handleButtonClick = (event) => {
+    //validate form data
+    event.preventDefault();
 
-        //Sign in or Sign up
+    let isValid = checkValidData(
+      email.current.value,
+      password.current.value,
+      !isSignInForm ? name.current.value : "none"
+    );
+    setErrorMessage(isValid);
+    if (isValid) return;
 
-        
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + ":" + errorMessage);
+          console.log(errorMessage);
+          // ..
+        });
+    } else {
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode);
+          console.log(errorMessage);
+        });
     }
-    const toggleSignInForm = () => {
-        setIsSignInForm(!isSignInForm);
-    }
+  };
+  const toggleSignInForm = () => {
+    setIsSignInForm(!isSignInForm);
+  };
 
-    
   return (
     <div className=" relative login-page">
       <img
@@ -42,15 +83,14 @@ export const Login = () => {
           <div className="flex justify-between">
             <Header />
           </div>
-          <div className="m-28 mx-auto sm:w-96 md:w-96 lg:w-96"  >
-            
+          <div className="m-28 mx-auto sm:w-96 md:w-96 lg:w-96">
             <form className="login-form flex flex-col gap-2 mx-auto bg-black bg-opacity-80 rounded p-8">
-            <h1 className="text-3xl font-bold text-white leading-tight pb-4 m-2">
-              {isSignInForm ? "Sign In" : "Sign Up"}
+              <h1 className="text-3xl font-bold text-white leading-tight pb-4 m-2">
+                {isSignInForm ? "Sign In" : "Sign Up"}
               </h1>
               {!isSignInForm && (
                 <input
-                ref = {name}
+                  ref={name}
                   type="text"
                   placeholder="Name"
                   className="p-4 m-2 bg-gray-900 bg-opacity-80 text-slate-200 rounded-md text-white"
@@ -70,13 +110,22 @@ export const Login = () => {
               />
               <p className="text-red-700 px-4 m-2">{errorMessage}</p>
               <button
-              onClick={handleButtonClick}
-               className="bg-red-700 hover:bg-red-800 text-white font-bold  p-4 m-2 rounded my-5 sign-in-button">
+                onClick={handleButtonClick}
+                className="bg-red-700 hover:bg-red-800 text-white font-bold  p-4 m-2 rounded my-5 sign-in-button"
+              >
                 {isSignInForm ? "Sign In" : "Sign Up"}
               </button>
-              <p className="text-white">{isSignInForm? "New to Netflix?": "Already have an account?"}  
-                <a href="#" onClick={toggleSignInForm} className="text-white font-semibold"> {isSignInForm? "Sign up ":"Sign in "}now.</a>
-                </p>
+              <p className="text-white">
+                {isSignInForm ? "New to Netflix?" : "Already have an account?"}
+                <a
+                  href="#"
+                  onClick={toggleSignInForm}
+                  className="text-white font-semibold"
+                >
+                  {" "}
+                  {isSignInForm ? "Sign up " : "Sign in "}now.
+                </a>
+              </p>
             </form>
           </div>
         </div>
