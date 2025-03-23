@@ -3,7 +3,10 @@ import Header from "../Header";
 import { Link } from "react-router-dom";
 import "./DefaultPage.css";
 
+
+
 const DefaultPage = () => {
+  
   return (
     <div className=" default-page">
       <img
@@ -12,13 +15,8 @@ const DefaultPage = () => {
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className=" h-screen">
-          <div className="flex justify-between">
+          <div >
             <Header />
-            <Link to="/login">
-              <button className="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded my-5 sign-in-button">
-                Sign In
-              </button>
-            </Link>
           </div>
           <div className="default-page-content flex flex-col items-center justify-center text-white mx-auto">
             <h1 className="text-6xl font-extrabold text-center leading-tight">
@@ -44,7 +42,6 @@ const DefaultPage = () => {
             </div>
           </div>
         </div>
-        <div></div>
       </div>
     </div>
   );

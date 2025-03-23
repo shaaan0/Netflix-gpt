@@ -3,14 +3,27 @@ import Header from "../Header";
 import "./Login.css";
 import { useState, useRef } from "react";
 import { checkValidData } from "../../utils/validate";
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../utils/userSlice";
+
+
+// The Login component is a functional component that returns a JSX element.
+// The component uses the useState and useRef hooks to manage state and create references to form inputs.
+// The component also uses the useNavigate hook to navigate to different routes.
+// The component uses the createUserWithEmailAndPassword and signInWithEmailAndPassword functions from the Firebase auth module to create and sign in users.
+// The component uses the checkValidData function from the validate module to validate form data.
 
 export const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   // useRef is a React Hook that lets you reference a value that’s not needed for rendering.
   const name = useRef(null);
   const email = useRef(null);
@@ -35,10 +48,25 @@ export const Login = () => {
         email.current.value,
         password.current.value
       )
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
+        .then((userCredential) => userCredential.user)
+        .then((user) => {
+          return updateProfile(user, {
+            displayName: name.current.value,
+            photoURL:
+              "https://avatars.githubusercontent.com/u/40761730?v=4&size=64",
+          });
+        })
+        .then(() => {
+          const { uid, email, displayName, photoURL } = auth.currentUser;
+          dispatch(
+            addUser({
+              uid: uid,
+              email: email,
+              displayName: displayName,
+              photoURL: photoURL,
+            })
+          );
+          navigate("/browse")
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -56,7 +84,8 @@ export const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
+          
+          navigate("/browse");
           // ...
         })
         .catch((error) => {
